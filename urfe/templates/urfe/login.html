@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URFE — Вхід</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    {% load static %}
+    <style>
+    :root {
+        --bg-color: #f8f9fa;
+        --text-color: #212529;
+        --form-bg: rgba(255, 255, 255, 0.95);
+        --input-bg: #ffffff;
+        --input-border: #ced4da;
+        --link-color: #0d6efd;
+        --shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark-mode {
+        --bg-color: #121212;
+        --text-color: #f1f1f1;
+        --form-bg: rgba(30, 30, 30, 0.95);
+        --input-bg: #2c2c2c;
+        --input-border: #444;
+        --link-color: #82caff;
+        --shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+    }
+
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        background-image: url('{% static "urfe/bg-register.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    .form-container {
+        background-color: var(--form-bg);
+        color: var(--text-color);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 40px 30px;
+        max-width: 500px;
+        margin: 60px auto;
+    }
+
+    .form-control,
+    .form-select {
+        background-color: var(--input-bg);
+        border: 1px solid var(--input-border);
+        color: var(--text-color);
+    }
+
+    .form-control::placeholder {
+        color: #aaa;
+    }
+
+    a {
+        color: var(--link-color);
+    }
+
+    .theme-toggle {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 22px;
+        color: var(--text-color);
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .spin-grow {
+        animation: spin-grow 1s ease-in-out forwards;
+    }
+
+    .moon-swing {
+        animation: moon-swing-hinge 1.2s ease-in-out forwards;
+        transform-origin: top center;
+    }
+
+    @keyframes spin-grow {
+        0% { transform: scale(1) rotate(0deg); }
+        50% { transform: scale(1.5) rotate(360deg); }
+        100% { transform: scale(1) rotate(360deg); }
+    }
+
+    @keyframes moon-swing-hinge {
+        0%   { transform: rotate(0deg); opacity: 1; }
+        20%  { transform: rotate(30deg); }
+        40%  { transform: rotate(-20deg); }
+        60%  { transform: rotate(15deg); }
+        80%  { transform: rotate(-10deg); }
+        100% { transform: rotate(0deg); }
+    }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <i id="theme-icon" class="fas fa-sun"></i>
+    </button>
+
+    <div class="form-container">
+        <div class="text-center mb-4">
+            <img src="{% static 'urfe/logo.png' %}" width="110" alt="Logo">
+            <h3 class="mt-3" style="color: var(--text-color);">Вхід до URFE</h3>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label" style="color: var(--text-color);">Ім’я користувача</label>
+                <input type="text" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" style="color: var(--text-color);">Роль</label>
+                <select name="role" class="form-select" required>
+                    <option disabled selected>Оберіть роль</option>
+                    <option value="admin">Адміністрація</option>
+                    <option value="teacher">Викладач</option>
+                    <option value="student">Студент</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" style="color: var(--text-color);">Пароль</label>
+                <input type="password" name="password" class="form-control" required>
+                {% if form.errors %}
+                    <div class="text-danger mt-2">Неправильне ім'я користувача, пароль або роль</div>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Увійти</button>
+        </form>
+        <p class="text-center mt-3" style="color: var(--text-color);">Ще не маєте акаунта? <a href="{% url 'register' %}">Зареєструватися</a></p>
+    </div>
+
+    <script>
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const icon = document.getElementById('theme-icon');
+
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.body.classList.add('dark-mode');
+        icon.className = 'fas fa-moon';
+    }
+
+    function toggleTheme() {
+        const isDark = document.body.classList.toggle('dark-mode');
+        const newTheme = isDark ? 'dark' : 'light';
+        localStorage.setItem('theme', newTheme);
+
+        if (newTheme === 'dark') {
+            icon.className = 'fas fa-moon';
+            icon.classList.remove('spin-grow');
+            icon.classList.add('moon-swing');
+        } else {
+            icon.className = 'fas fa-sun';
+            icon.classList.remove('moon-swing');
+            icon.classList.add('spin-grow');
+        }
+
+        setTimeout(() => {
+            icon.classList.remove('spin-grow');
+            icon.classList.remove('moon-swing');
+        }, 1300);
+    }
+    </script>
+</body>
+</html>

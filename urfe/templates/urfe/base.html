@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URFE — {% block title %}Головна{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'urfe/styles.css' %}?v={% now 'U' %}">
+</head>
+<body>
+    <!-- Верхнє меню -->
+    <nav class="navbar navbar-expand-lg" style="background-color: #00aaff; color: #ffffff;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'urfe/logo.png' %}?v={% now 'U' %}" alt="URFE Logo" style="width: 100px;">
+            </a>
+            <form class="d-flex ms-auto" method="get" action="{% url 'home' %}">
+                <input class="form-control me-2" type="search" name="search" placeholder="Пошук..." aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Знайти</button>
+            </form>
+            {% if user.is_authenticated %}
+                <div class="dropdown ms-3">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% if user.userprofile.avatar %}
+                            <img src="{{ user.userprofile.avatar.url }}" alt="Аватар" class="user-avatar-nav" style="width: 40px; height: 40px; border-radius: 50%;">
+                        {% else %}
+                            <img src="{% get_media_prefix %}urfe/basic_avatar.png" alt="Аватар" class="user-avatar-nav" style="width: 40px; height: 40px; border-radius: 50%;">
+                        {% endif %}
+                        <span class="ms-2">{{ user.username }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="{% url 'profile' %}">Профіль</a></li>
+                        <li><a class="dropdown-item" href="{% url 'edit_profile' %}">Редагувати профіль</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Вийти</a></li>
+                    </ul>
+                </div>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline-primary ms-2">Увійти</a>
+                <a href="{% url 'register' %}" class="btn btn-primary ms-2">Зареєструватися</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="overlay"></div>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Бічна панель -->
+            {% if user.is_authenticated %}
+            <div class="col-md-3">
+                <div class="sidebar">
+                    <div class="user-info text-center mb-4">
+                        <a href="{% url 'profile' %}" class="avatar-link">
+                            {% if user.userprofile.avatar %}
+                                <img src="{{ user.userprofile.avatar.url }}" alt="Аватар користувача {{ user.username }}" class="user-avatar">
+                            {% else %}
+                                <img src="{% get_media_prefix %}urfe/basic_avatar.png" alt="Аватар користувача {{ user.username }}" class="user-avatar">
+                            {% endif %}
+                        </a>
+                        <h4 class="mt-2">{{ user.username }}</h4>
+                        <a href="{% url 'edit_profile' %}" class="btn btn-sm btn-custom mt-2">
+                            <i class="fas fa-edit"></i> Редагувати профіль
+                        </a>
+                    </div>
+                    <ul class="nav nav-tabs" id="sidebarTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="published-tab" data-bs-toggle="tab" data-bs-target="#published" type="button" role="tab">Мої матеріали</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="favorites-tab" data-bs-toggle="tab" data-bs-target="#favorites" type="button" role="tab">Улюблені матеріали</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content mt-3">
+                        <div class="tab-pane fade show active" id="published" role="tabpanel">
+                            {% if user_materials.exists %}
+                                <ul class="list-group">
+                                    {% for material in user_materials %}
+                                        <li class="list-group-item">{{ material.title }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-muted">Ви ще не опублікували жодного матеріалу.</p>
+                            {% endif %}
+                        </div>
+                        <div class="tab-pane fade" id="favorites" role="tabpanel">
+                            {% if favorite_materials.exists %}
+                                <ul class="list-group">
+                                    {% for material in favorite_materials %}
+                                        <li class="list-group-item">{{ material.title }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-muted">У вас немає улюблених матеріалів.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            <!-- Основний контент -->
+            <div class="{% if user.is_authenticated %}col-md-9{% else %}col-md-12{% endif %}">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+<script>
+    // Підтримка фільтрів з пагінацією
+    document.addEventListener('DOMContentLoaded', function() {
+        const paginationLinks = document.querySelectorAll('.page-link');
+        paginationLinks.forEach(link => {
+            const url = new URL(link.href);
+            const searchParams = new URLSearchParams(window.location.search);
+            
+            // Зберігаємо параметри фільтрації
+            ['category', 'author', 'search'].forEach(param => {
+                if (searchParams.has(param) && !url.searchParams.has(param)) {
+                    url.searchParams.set(param, searchParams.get(param));
+                }
+            });
+            
+            link.href = url.toString();
+        });
+    });
+</script>
+</html>

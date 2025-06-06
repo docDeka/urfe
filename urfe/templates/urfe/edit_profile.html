@@ -1,0 +1,43 @@
+{% extends 'urfe/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Редагувати профіль</h2>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="this.parentElement.style.display='none';"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="card p-4 shadow-sm" style="background-color: #2e3a5e; color: #ffffff;">
+        <h4>Інформація з реєстрації</h4>
+        <p><strong>Ім'я користувача:</strong> {{ request.user.username }}</p>
+        <p><strong>Email:</strong> {{ request.user.email }}</p>
+        <p><strong>Дата реєстрації:</strong> {{ request.user.date_joined|date:"d.m.Y" }}</p>
+        <h4 class="mt-4">Роль: {{ profile.role }}</h4>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_avatar" class="form-label">Аватар</label>
+                <input type="file" class="form-control" name="avatar" id="id_avatar" accept="image/*">
+                {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}" alt="Поточний аватар" style="width: 100px; height: 100px; border-radius: 50%; margin-top: 10px;">
+                {% else %}
+                    <p>Немає аватара. Завантажте нове зображення.</p>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label for="id_bio" class="form-label">Про себе (до 20 слів)</label>
+                {{ form.bio }}
+                {% if form.bio.errors %}
+                    <small class="text-danger">{{ form.bio.errors }}</small>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-custom">Зберегти зміни</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

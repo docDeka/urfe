@@ -1,0 +1,67 @@
+{% extends 'urfe/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Додати новий матеріал</h2>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="this.parentElement.style.display='none';"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="card p-4 shadow-sm" style="background-color: #2e3a5e; color: #ffffff;">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_title" class="form-label">Назва</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <small class="text-danger">{{ form.title.errors }}</small>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label for="id_description" class="form-label">Опис</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    <small class="text-danger">{{ form.description.errors }}</small>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label for="id_category" class="form-label">Категорія</label>
+                {{ form.category }}
+                {% if form.category.errors %}
+                    <small class="text-danger">{{ form.category.errors }}</small>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+    <label class="form-label">Матеріал (опціонально)</label>
+    <div class="material-upload-options">
+        <button type="button" class="add-link-btn" onclick="toggleLinkInput()">Додати посилання</button>
+        <label class="custom-file-upload">
+            {{ form.file }} <!-- Залишаємо як є -->
+            Прикріпити файл
+        </label>
+    </div>
+    <input type="text" class="link-input" id="linkInput" placeholder="Вставте посилання на матеріал..." name="link">
+    {% if form.file.errors or form.link.errors %}
+        <small class="text-danger">
+            {% for error in form.file.errors %}{{ error }}<br>{% endfor %}
+            {% for error in form.link.errors %}{{ error }}<br>{% endfor %}
+        </small>
+    {% endif %}
+</div>
+            <button type="submit" class="btn btn-custom">Створити матеріал</button>
+        </form>
+    </div>
+</div>
+
+<script>
+function toggleLinkInput() {
+    const linkInput = document.getElementById('linkInput');
+    linkInput.classList.toggle('active');
+}
+</script>
+{% endblock %}
