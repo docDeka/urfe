@@ -1,14 +1,15 @@
 /* Основні стилі */
 body {
-	font-family: 'Roboto', sans-serif;
-	background-color: #0F172A;
-	/* Темно-синій, майже чорний фон */
-	margin: 0;
-	padding: 0;
-	color: #FFFFFF;
-	/* Чистий білий текст для кращого контрасту */
-	line-height: 1.6;
-	/* Покращує читабельність */
+	color: var(--text-color);
+	background-color: var(--bg-color);
+	transition: background 0.3s ease, color 0.3s ease;
+	min-height: 100vh;
+	background-size: cover;
+	background-position: center;
+}
+
+container mt-5 {
+	margin-bottom: -300px;
 }
 
 h1,
@@ -16,8 +17,9 @@ h2,
 h3,
 h4,
 h5,
-h6 {
-	color: #FFFFFF;
+h6,
+.form-label {
+	--color: var(--text-color);
 	/* Білий для заголовків */
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 	/* Тінь для кращої видимості */
@@ -58,6 +60,29 @@ h6 {
 	text-align: center;
 }
 
+.user-info h4 {
+	color: var(--text-color) !important;
+}
+
+.navbar {
+	width: 100%;
+	position: fixed;
+}
+
+.navbar .dropdown-toggle span {
+	color: var(--text-color) !important;
+}
+
+:root {
+	--text-color: #212529;
+}
+
+body.dark-mode {
+	background-image: url("{% static 'urfe/BFRAL.jpg' %}");
+	--text-color: #f1f1f1;
+}
+
+
 .user-info p {
 	color: #ffffff;
 	/* Білий текст для інформації користувача */
@@ -71,7 +96,6 @@ h6 {
 	height: 80px;
 	border-radius: 50%;
 	object-fit: cover;
-	border: 2px solid #F59E0B;
 	transition: border-color 0.3s ease;
 }
 
@@ -162,8 +186,6 @@ h6 {
 	margin-right: 10px;
 	width: 40px;
 	height: 40px;
-	border-radius: 50%;
-	border: 2px solid #F59E0B;
 }
 
 .dropdown-menu {
@@ -372,21 +394,23 @@ h6 {
 .add-link-btn {
 	background-color: transparent;
 	border: none;
-	color: #F59E0B;
+	color: var(--text-color);
 	cursor: pointer;
-	font-size: 16px;
+	font-size: 20px;
 	position: relative;
-	padding-left: 25px;
+	padding-left: 30px;
 	transition: color 0.3s ease;
 }
 
 .add-link-btn:hover {
-	color: #3B82F6;
+	color: #838383;
 }
 
 .add-link-btn::before {
 	content: "🔗";
 	/* Іконка посилання */
+	size: 50px;
+	;
 	position: absolute;
 	left: 0;
 	top: 50%;
@@ -397,8 +421,8 @@ h6 {
 .link-input {
 	display: none;
 	/* Спочатку приховане */
-	background-color: #0F172A;
-	color: #FFFFFF;
+	background-color: #1f1f1f9f;
+	color: var(--text-color);
 	border: 1px solid #3B82F6;
 	border-radius: 5px;
 	padding: 8px;
@@ -406,7 +430,13 @@ h6 {
 	margin-top: 10px;
 }
 
+body:not(.dark-mode) .link-input {
+	background-color: #ffffff76;
+	/* Темніший текст у світлій темі */
+}
+
 .link-input.active {
+
 	display: block;
 	/* Показуємо, коли активне */
 }
@@ -415,21 +445,23 @@ h6 {
 .custom-file-upload {
 	background-color: transparent;
 	border: none;
-	color: #F59E0B;
+	color: var(--text-color);
 	cursor: pointer;
-	font-size: 16px;
+	font-size: 20px;
 	position: relative;
-	padding-left: 25px;
+	padding-left: 30px;
 	transition: color 0.3s ease;
 }
 
 .custom-file-upload:hover {
-	color: #3B82F6;
+	color: #838383;
 }
 
 .custom-file-upload::before {
 	content: "📎";
 	/* Іконка скріпки */
+	size: 50px;
+	;
 	position: absolute;
 	left: 0;
 	top: 50%;
@@ -462,6 +494,7 @@ h6 {
 	}
 
 	.sidebar {
+		color: var(--text-color);
 		position: relative;
 		top: 0;
 		height: auto;
@@ -484,6 +517,70 @@ h6 {
 	.form-label,
 	.form-control,
 	.form-select {
-		font-size: 14px;
+		font-size: 20px;
 	}
+}
+
+p.text-muted {
+	font: 20px;
+	color: white !important;
+}
+
+/* Стилізація іконки перемикача теми */
+.theme-toggle {
+	position: fixed;
+	top: 12px;
+	right: 16px;
+	font-size: 24px;
+	background: none;
+	border: none;
+	color: var(--text-color);
+	z-index: 9999;
+	cursor: pointer;
+	transition: color 0.3s ease;
+}
+
+.theme-toggle:focus {
+	outline: none;
+}
+
+body:not(.dark-mode) .form-control::placeholder {
+	color: #555 !important;
+	/* Темніший сірий для кращої видимості */
+}
+
+body:not(.dark-mode) .card-text {
+	color: #00183e !important;
+	/* Темніший текст у світлій темі */
+}
+
+body:not(.dark-mode) .text-muted {
+	color: #428aff !important;
+	/* Темніший текст у світлій темі */
+}
+
+
+.btn-custom,
+.btn,
+.btn-success {
+	transition: all 0.3s ease, transform 0.2s ease;
+}
+
+.btn-custom:hover,
+.btn:hover,
+.btn-success:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn-custom:active,
+.btn:active,
+.btn-success:active {
+	transform: scale(0.96);
+	box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+body:not(.dark-mode) .form-label {
+	margin-bottom: 1rem;
+	color: #000000;
 }

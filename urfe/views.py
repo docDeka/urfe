@@ -99,7 +99,7 @@ def login_view(request):
             try:
                 if user.userprofile.role == role:
                     login(request, user)
-                    return redirect('home')  # Заміни на свою головну сторінку
+                    return redirect('home')
                 else:
                     messages.error(request, 'Роль не відповідає.')
             except UserProfile.DoesNotExist:
