@@ -17,21 +17,19 @@ class MaterialForm(forms.ModelForm):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['avatar', 'bio', 'role']
+        fields = ['avatar', 'role']
         widgets = {
-            'bio': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Напишіть про себе (до 20 слів)...'}),
-            'role': forms.Select(attrs={'disabled': 'disabled'}),  # Роль лише для перегляду
+            'role': forms.Select(attrs={'disabled': 'disabled'}),
         }
     
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
-    bio = forms.CharField(widget=forms.Textarea, required=False)
     avatar = forms.ImageField(required=False)
-
+    role = forms.ChoiceField(choices=UserProfile.ROLE_CHOICES)
+    
     class Meta:
         model = User
-        fields = ('username', 'email', 'password1', 'password2', 'bio', 'avatar')
-
+        fields = ('username', 'email', 'password1', 'password2', 'role', 'avatar')
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
@@ -39,12 +37,16 @@ class CustomUserCreationForm(UserCreationForm):
             user.save()
             UserProfile.objects.create(
                 user=user,
-                bio=self.cleaned_data['bio'],
-                avatar=self.cleaned_data['avatar']
+                avatar=self.cleaned_data['avatar'],
+                role=self.cleaned_data['role']
             )
         return user
 
 class CustomAuthenticationForm(AuthenticationForm):
-    class Meta:
-        model = User
-        fields = ('username', 'password')
+    role = forms.ChoiceField(choices=UserProfile.ROLE_CHOICES)
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({'class': 'form-control'})
+        self.fields['password'].widget.attrs.update({'class': 'form-control'})
+        self.fields['role'].widget.attrs.update({'class': 'form-control'})

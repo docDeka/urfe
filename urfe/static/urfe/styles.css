@@ -8,10 +8,6 @@ body {
 	background-position: center;
 }
 
-container mt-5 {
-	margin-bottom: -300px;
-}
-
 h1,
 h2,
 h3,
@@ -34,6 +30,16 @@ h6,
 	background: rgba(0, 0, 0, 0.5);
 	z-index: -1;
 	display: none;
+}
+
+text-center mt-3 {
+	color: white !important;
+	font: bold 15px;
+}
+
+body:not(.dark-mode) .text-center mt-3 {
+	font: bold 15px;
+	color: black !important;
 }
 
 .main-content {

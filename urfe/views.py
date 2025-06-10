@@ -1,7 +1,7 @@
 # urfe/views.py
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.decorators import login_required  # Додано імпорт
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Category, Material, UserProfile
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, MaterialForm, UserProfileForm
@@ -12,7 +12,7 @@ from django.db.models import Q
 @login_required
 def create_material(request):
     if request.method == 'POST':
-        form = MaterialForm(request.POST, request.FILES)  # Обробка файлів
+        form = MaterialForm(request.POST, request.FILES)
         if form.is_valid():
             material = form.save(commit=False)
             material.author = request.user
@@ -20,8 +20,7 @@ def create_material(request):
             messages.success(request, "Матеріал успішно створено!")
             return redirect('home')
         else:
-            # помилки для діагностики
-            print(form.errors)
+            messages.error(request, "Помилка при створенні матеріалу. Перевірте форму.")
     else:
         form = MaterialForm()
     return render(request, 'urfe/create_material.html', {'form': form})
@@ -30,7 +29,6 @@ def create_material(request):
 def home(request):
     materials = Material.objects.all().order_by('-created_at')
     
-    # Фільтри та пошук
     category = request.GET.get('category')
     author_id = request.GET.get('author')
     search_query = request.GET.get('search', '')
@@ -45,7 +43,6 @@ def home(request):
             Q(description__icontains=search_query)
         )
 
-    # Пагінація після фільтрації
     paginator = Paginator(materials, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -55,7 +52,7 @@ def home(request):
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     
     return render(request, 'urfe/home.html', {
-        'page_obj': page_obj,  # Використовуємо page_obj замість materials
+        'page_obj': page_obj,
         'categories': categories,
         'authors': authors,
         'user_materials': Material.objects.filter(author=request.user),
@@ -77,50 +74,65 @@ def register(request):
         form = CustomUserCreationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
-            UserProfile.objects.get_or_create(user=user)
+
+            UserProfile.objects.get_or_create(
+                user=user,
+                defaults={
+                'avatar': form.cleaned_data.get('avatar'),
+                'role': form.cleaned_data.get('role')
+                })
+
             login(request, user)
+            messages.success(request, "Реєстрація успішна! Ласкаво просимо!")
             return redirect('home')
         else:
-            messages.error(request, form.errors)
+            messages.error(request, "Ой, схоже ви помилились, подивіться ще раз, дякую😉")
     else:
         form = CustomUserCreationForm()
     return render(request, 'urfe/register.html', {'form': form})
 
-
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        role = request.POST['role']
-
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            try:
-                if user.userprofile.role == role:
-                    login(request, user)
-                    return redirect('home')
-                else:
-                    messages.error(request, 'Роль не відповідає.')
-            except UserProfile.DoesNotExist:
-                messages.error(request, 'Профіль не знайдено.')
+        form = CustomAuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            role = form.cleaned_data.get('role')
+            
+            user = authenticate(request, username=username, password=password)
+            
+            if user is not None:
+                try:
+                    profile = user.userprofile
+                    if profile.role == role:
+                        login(request, user)
+                        messages.success(request, f"Вітаємо, {username}!")
+                        return redirect('home')
+                    else:
+                        messages.error(request, "Обрана роль не відповідає вашому профілю")
+                except UserProfile.DoesNotExist:
+                    messages.error(request, "Профіль користувача не знайдено")
+            else:
+                messages.error(request, "Невірне ім'я користувача або пароль")
         else:
-            messages.error(request, 'Невірне ім’я або пароль.')
-    
-    return render(request, 'urfe/login.html')
-
-def logout_view(request):
-    logout(request)
-    request.session.flush()
-    return redirect('welcome')
+            messages.error(request, "Ой, схоже ви помилились, подивіться ще раз чи ви ввели правильні дані, дякую😉")
+    else:
+        form = CustomAuthenticationForm()
+    return render(request, 'urfe/login.html', {'form': form})
 
 def welcome(request):
     return render(request, 'urfe/welcome.html')
 
 @login_required
+def logout_view(request):
+    logout(request)
+    messages.success(request, "Ви успішно вийшли з системи")
+    return redirect('welcome')
+
+@login_required
 def toggle_favorite(request, material_id):
     material = get_object_or_404(Material, id=material_id)
-    user_profile, _ = UserProfile.objects.get_or_create(user=request.user)  # Захист від відсутнього профілю
+    user_profile, _ = UserProfile.objects.get_or_create(user=request.user)
     
     if material in user_profile.favorite_materials.all():
         user_profile.favorite_materials.remove(material)

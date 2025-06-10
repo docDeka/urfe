@@ -2,11 +2,47 @@
 {% load static %}
 
 {% block content %}
+<style>
+/* ...ваші попередні стилі... */
+#file-success-alert {
+    display: none;
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translate(-50%, -30px);
+    min-width: 250px;
+    background: #27ae60;
+    color: #fff;
+    border-radius: 8px;
+    padding: 16px 32px;
+    box-shadow: 0 8px 32px rgba(44,62,80,0.2);
+    font-size: 1.1rem;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.5s, transform 0.5s;
+}
+#file-success-alert.show {
+    display: block;
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+#selected-file-name {
+    margin-left: 10px;
+    color: #b2ffb2;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: color 0.3s;
+}
+.container.mt-5 {
+    margin-top: 100px !important;
+}
+
+</style>
 <div class="container mt-5">
     <h2 class="text-center mb-4">Додати новий матеріал</h2>
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <div class="alert alert-success alert-dismissible fade show" role="alert"></div>
                 {{ message }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="this.parentElement.style.display='none';"></button>
             </div>
@@ -37,31 +73,62 @@
                 {% endif %}
             </div>
             <div class="mb-3">
-    <label class="form-label">Матеріал (опціонально)</label>
-    <div class="material-upload-options">
-        <button type="button" class="add-link-btn" onclick="toggleLinkInput()">Додати посилання</button>
-        <label class="custom-file-upload">
-            {{ form.file }} <!-- Залишаємо як є -->
-            Прикріпити файл
-        </label>
-    </div>
-    <input type="text" class="link-input" id="linkInput" placeholder="Вставте посилання на матеріал..." name="link">
-    {% if form.file.errors or form.link.errors %}
-        <small class="text-danger">
-            {% for error in form.file.errors %}{{ error }}<br>{% endfor %}
-            {% for error in form.link.errors %}{{ error }}<br>{% endfor %}
-        </small>
-    {% endif %}
-</div>
+                <label class="form-label">Матеріал (опціонально)</label>
+                <div class="material-upload-options">
+                    <button type="button" class="add-link-btn" onclick="toggleLinkInput()">
+                        <span class="me-1" style='padding-right: 20px;'><i class="bi bi-link-45deg"></i></span> Додати посилання
+                    </button>
+                    <label class="custom-file-upload">
+                        <span class="me-1" style='padding-right: 20px;'><i class="bi bi-paperclip"></i></span> Прикріпити файл
+                        {{ form.file }}
+                    </label>
+                    <span id="selected-file-name"></span>
+                </div>
+                <input type="text" class="form-control link-input" id="linkInput" placeholder="Вставте посилання на матеріал..." name="link" style="display:none;">
+                {% if form.file.errors or form.link.errors %}
+                    <small class="text-danger">
+                        {% for error in form.file.errors %}{{ error }}<br>{% endfor %}
+                        {% for error in form.link.errors %}{{ error }}<br>{% endfor %}
+                    </small>
+                {% endif %}
+            </div>
             <button type="submit" class="btn btn-custom">Створити матеріал</button>
         </form>
     </div>
 </div>
 
+<div id="file-success-alert">Файл успішно доданий!</div>
+
 <script>
 function toggleLinkInput() {
     const linkInput = document.getElementById('linkInput');
-    linkInput.classList.toggle('active');
+    if (linkInput.style.display === 'none' || linkInput.style.display === '') {
+        linkInput.style.display = 'block';
+    } else {
+        linkInput.style.display = 'none';
+    }
 }
+
+// Показ імені вибраного файлу та анімоване повідомлення
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.querySelector('input[type="file"][name="{{ form.file.name }}"]') || document.querySelector('input[type="file"]');
+    const fileNameSpan = document.getElementById('selected-file-name');
+    const alertBox = document.getElementById('file-success-alert');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            if (fileInput.files.length > 0) {
+                fileNameSpan.textContent = fileInput.files[0].name;
+                // Показати анімоване повідомлення
+                alertBox.classList.add('show');
+                setTimeout(() => {
+                    alertBox.classList.remove('show');
+                }, 2500);
+            } else {
+                fileNameSpan.textContent = '';
+            }
+        });
+    }
+});
 </script>
 {% endblock %}

@@ -56,7 +56,6 @@
 .card, .form-control, .form-select, .btn, .sidebar {
   background-color: var(--card-bg) !important;
   color: var(--text-color) !important;
-  border-color: var(--border-color) !important;
   
 }
 a, .navbar, .nav-link, .dropdown-item, .btn-custom {
@@ -66,20 +65,15 @@ a, .navbar, .nav-link, .dropdown-item, .btn-custom {
 .sidebar {
   background-color: var(--card-bg);
   color: var(--text-color);
-  border-right: 1px solid var(--border-color);
   min-height: 100vh;
   width: auto(400px);
   margin-top: 20px;
   margin-left: -30px;
 }
-container mt-5 {
-	margin-bottom: -300px;
-}
 .sidebar a {
   display: block;
   padding: 8px 12px;
   margin-bottom: 5px;
-  border-radius: 6px;
   text-decoration: none;
   color: var(--text-color);
 }
@@ -95,6 +89,7 @@ container mt-5 {
 body:not(.dark-mode) .text-muted {
   color: var(--text-color) !important;
 }
+
 body.dark-mode .list-group-item,
 body.dark-mode .dropdown-menu {
   background-color: var(--card-bg) !important;
@@ -480,6 +475,29 @@ body.dark-mode .form-control::placeholder {
   border-radius: 0 30px 0 0;
   border-bottom: 10px solid #b0cfe4;
 }
+@keyframes spin-grow {
+        0% { transform: scale(1) rotate(0deg); }
+        50% { transform: scale(1.5) rotate(360deg); }
+        100% { transform: scale(1) rotate(360deg); }
+    }
+
+    @keyframes moon-swing-hinge {
+        0%   { transform: rotate(0deg); opacity: 1; }
+        20%  { transform: rotate(30deg); }
+        40%  { transform: rotate(-20deg); }
+        60%  { transform: rotate(15deg); }
+        80%  { transform: rotate(-10deg); }
+        100% { transform: rotate(0deg); }
+    }
+
+    .spin-grow {
+        animation: spin-grow 1s ease-in-out forwards;
+    }
+
+    .moon-swing {
+        animation: moon-swing-hinge 1.2s ease-in-out forwards;
+        transform-origin: top center;
+    }
 
 </style>
 </head>
@@ -536,21 +554,21 @@ body.dark-mode .form-control::placeholder {
 </div>
 
     <!-- Верхнє меню -->
-    <nav class="navbar navbar-expand-lg" style="background-color: #00aaff; color: ar(--text-color);">
-        <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg" style="background-color: var(--card-bg); color: var(--text-color); position: relative; z-index: 2000;">
+        <div class="container-fluid" style="position: relative; z-index: 2000;">
           <button class="theme-toggle" onclick="toggleTheme()">
   <i id="theme-icon" class="fas fa-sun"></i>
 </button>
-            <a class="container mt-5" href="{% url 'home' %}">
-                <img src="{% static 'urfe/logo.png' %}?v={% now 'U' %}" alt="URFE Logo" style="width: 110px; margin-top: -50px;">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'urfe/logo.png' %}?v={% now 'U' %}" alt="URFE Logo" style="width: 110px; ">
             </a>
             <form class="d-flex ms-auto" method="get" action="{% url 'home' %}">
                 <input class="form-control me-2" type="search" name="search" placeholder="Пошук..." aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Знайти</button>
             </form>
             {% if user.is_authenticated %}
-                <div class="dropdown ms-3">
-                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="dropdown ms-3" style="position: relative; z-index: 2100;">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="position: relative; z-index: 2101;">
                         {% if user.userprofile.avatar %}
                             <img src="{{ user.userprofile.avatar.url }}" alt="Аватар" class="user-avatar-nav" style="width: 40px; height: 40px; border-radius: 50%;">
                         {% else %}
@@ -558,7 +576,7 @@ body.dark-mode .form-control::placeholder {
                         {% endif %}
                         <span class="ms-2">{{ user.username }}</span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown" style="z-index: 2200; position: absolute;">
                         <li><a class="dropdown-item" href="{% url 'profile' %}">Профіль</a></li>
                         <li><a class="dropdown-item" href="{% url 'edit_profile' %}">Редагувати профіль</a></li>
                         <li><hr class="dropdown-divider"></li>
@@ -570,9 +588,34 @@ body.dark-mode .form-control::placeholder {
                 <a href="{% url 'register' %}" class="btn btn-primary ms-2">Зареєструватися</a>
             {% endif %}
         </div>
+        <!-- Додаємо абсолютний контейнер для випадаючих меню, щоб вони не відштовхували елементи вниз -->
+        <style>
+          /* Випадаючі меню завжди поверх всього */
+          .dropdown-menu {
+            z-index: 3000 !important;
+            position: absolute !important;
+          }
+          /* Контейнер для dropdown не впливає на flow */
+          .navbar .dropdown {
+            position: relative !important;
+          }
+        </style>
+        <!-- Робимо навбар фіксованим зверху -->
+        <style>
+          .navbar {
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 2000;
+          }
+          .main-content {
+            margin-top: 100px;
+          }
+        </style>
     </nav>
 
-    <div class="overlay"></div>
+    <div class="overlay" style="z-index: 100;"></div>
     <div class="container-fluid">
         <div class="row">
             <!-- Бічна панель -->

@@ -1,0 +1,596 @@
+/* Основні стилі */
+body {
+	color: var(--text-color);
+	background-color: var(--bg-color);
+	transition: background 0.3s ease, color 0.3s ease;
+	min-height: 100vh;
+	background-size: cover;
+	background-position: center;
+}
+
+container mt-5 {
+	margin-bottom: -300px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.form-label {
+	--color: var(--text-color);
+	/* Білий для заголовків */
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+	/* Тінь для кращої видимості */
+}
+
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: -1;
+	display: none;
+}
+
+text-center mt-3 {
+	color: white !important;
+	font: bold 15px;
+}
+
+body:not(.dark-mode) .text-center mt-3 {
+	font: bold 15px;
+	color: black !important;
+}
+
+.main-content {
+	padding: 20px;
+}
+
+/* Бічна панель */
+.sidebar {
+	background-color: #5a3800;
+	padding: 20px;
+	height: calc(100vh - 70px);
+	/* Висота до низу сторінки */
+	position: fixed;
+	/* Фіксована позиція */
+	top: 70px;
+	box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+	border-radius: 0 15px 15px 0;
+	/* Заокруглення справа */
+	width: 250px;
+	/* Фіксована ширина */
+}
+
+.user-info {
+	text-align: center;
+}
+
+.user-info h4 {
+	color: var(--text-color) !important;
+}
+
+.navbar {
+	width: 100%;
+	position: fixed;
+}
+
+.navbar .dropdown-toggle span {
+	color: var(--text-color) !important;
+}
+
+:root {
+	--text-color: #212529;
+}
+
+body.dark-mode {
+	background-image: url("{% static 'urfe/BFRAL.jpg' %}");
+	--text-color: #f1f1f1;
+}
+
+
+.user-info p {
+	color: #ffffff;
+	/* Білий текст для інформації користувача */
+	font-weight: 500;
+	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+	/* Легка тінь */
+}
+
+.user-avatar {
+	width: 80px;
+	height: 80px;
+	border-radius: 50%;
+	object-fit: cover;
+	transition: border-color 0.3s ease;
+}
+
+.avatar-link {
+	text-decoration: none;
+}
+
+.avatar-link:hover .user-avatar {
+	opacity: 0.9;
+	border-color: #3B82F6;
+}
+
+.nav-tabs .nav-link {
+	color: #7e7e7e;
+	/* Білий текст для вкладок */
+	border: none;
+	border-bottom: 2px solid transparent;
+	transition: all 0.3s ease;
+}
+
+.nav-tabs .nav-link:hover,
+.nav-tabs .nav-link.active {
+	color: #818181;
+	font-weight: bold;
+	border-bottom: 2px solid #3B82F6;
+}
+
+.tab-content .list-group-item {
+	background-color: #1E293B;
+	color: #FFFFFF;
+	/* Білий текст для списків */
+	border: none;
+	margin-bottom: 5px;
+	border-radius: 5px;
+}
+
+/* Верхнє меню */
+.navbar {
+	padding: 10px 20px;
+	background-color: #1E293B;
+	color: #FFFFFF;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	max-height: 90px;
+	display: flex;
+	align-items: center;
+}
+
+.navbar-brand img {
+	margin-right: 10px;
+	width: 100px;
+	height: auto;
+}
+
+.navbar .form-control {
+	border-radius: 20px;
+	padding: 5px 15px;
+	border: 1px solid #3B82F6;
+	background-color: #0F172A;
+	color: #FFFFFF;
+	/* Білий текст у пошуковому полі */
+	transition: border-color 0.3s ease;
+}
+
+.navbar .form-control:focus {
+	border-color: #F59E0B;
+	box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+}
+
+.navbar .form-control::placeholder {
+	color: #CBD5E1;
+	/* Світло-сірий для плейсхолдерів */
+}
+
+.navbar .btn-outline-success {
+	border-color: #3B82F6;
+	color: #FFFFFF;
+	background-color: transparent;
+	transition: all 0.3s ease;
+}
+
+.navbar .btn-outline-success:hover {
+	background-color: #3B82F6;
+	color: #FFFFFF;
+	border-color: #3B82F6;
+}
+
+.user-avatar-nav {
+	margin-right: 10px;
+	width: 40px;
+	height: 40px;
+}
+
+.dropdown-menu {
+	background-color: #1E293B;
+	border: none;
+	border-radius: 10px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown-item {
+	color: #FFFFFF;
+	/* Білий текст у меню */
+	transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+	background-color: #3B82F6;
+	color: #FFFFFF;
+}
+
+.dropdown-item i {
+	margin-right: 10px;
+	color: #F59E0B;
+}
+
+/* Фільтри */
+.filters .form-label {
+	color: #FFFFFF;
+	/* Білий для лейблів */
+	font-size: 14px;
+	margin-bottom: 5px;
+	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+	/* Тінь для контрасту */
+}
+
+.filters .form-select {
+	background-color: #0F172A;
+	color: #FFFFFF;
+	/* Білий текст у випадаючих списках */
+	border: 1px solid #3B82F6;
+	border-radius: 5px;
+	transition: all 0.3s ease;
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.filters .form-select:focus {
+	border-color: #F59E0B;
+	box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+}
+
+.filters .form-select option {
+	background-color: #0F172A;
+	color: #FFFFFF;
+}
+
+/* Кнопки */
+.btn-custom {
+	background-color: #3B82F6;
+	color: #FFFFFF;
+	border: none;
+	border-radius: 5px;
+	padding: 8px 16px;
+	transition: background-color 0.3s ease;
+}
+
+.btn-custom:hover {
+	background-color: #2563EB;
+}
+
+.btn-primary {
+	background-color: #3B82F6;
+	border-color: #3B82F6;
+	color: #FFFFFF;
+	transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+	background-color: #2563EB;
+	border-color: #2563EB;
+}
+
+.btn-danger {
+	background-color: #EF4444;
+	border-color: #EF4444;
+	color: #FFFFFF;
+	transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+	background-color: #DC2626;
+	border-color: #DC2626;
+}
+
+/* Картки матеріалів */
+.material-card {
+	border: none;
+	border-radius: 10px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	background-color: #FFFFFF;
+	transition: transform 0.2s ease;
+	margin-bottom: 20px;
+}
+
+.material-card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.material-card .card-body {
+	padding: 15px;
+}
+
+.material-card .card-title a {
+	color: #7b96c3;
+	/* Темно-сірий для заголовків на білому фоні */
+	text-decoration: none;
+	font-weight: 500;
+	transition: color 0.3s ease;
+	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+	/* Легка тінь */
+}
+
+.material-card .card-title a:hover {
+	color: #3B82F6;
+}
+
+.material-card .card-text {
+	color: #899bb4;
+	/* Сірий для тексту опису */
+}
+
+.material-card small {
+	color: #79acff !important;
+	/* Темніший сірий для дрібного тексту */
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+	/* Тінь для кращої видимості */
+}
+
+.favorite-btn {
+	color: #94A3B8;
+	text-decoration: none;
+	transition: color 0.3s ease;
+}
+
+.favorite-btn:hover {
+	color: #F59E0B;
+}
+
+.favorited {
+	color: #F59E0B;
+}
+
+/* Форми */
+.card {
+	background-color: #1E293B;
+	border-radius: 10px;
+	color: #FFFFFF;
+	/* Білий текст у формах */
+	padding: 20px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.form-label {
+	color: #FFFFFF;
+	/* Білий для лейблів */
+	font-size: 14px;
+	margin-bottom: 5px;
+	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+	/* Тінь для контрасту */
+}
+
+.form-control,
+.form-select {
+	background-color: #0F172A;
+	color: #FFFFFF;
+	/* Білий текст у полях */
+	border: 1px solid #3B82F6;
+	border-radius: 5px;
+	transition: all 0.3s ease;
+	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+	/* Посилена внутрішня тінь */
+}
+
+.form-control:focus,
+.form-select:focus {
+	background-color: #0F172A;
+	color: #FFFFFF;
+	border-color: #F59E0B;
+	box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+}
+
+.form-control::placeholder,
+.form-select::placeholder {
+	color: #CBD5E1;
+	/* Світло-сірий для плейсхолдерів */
+}
+
+/* Контейнер для вибору між файлом і посиланням */
+.material-upload-options {
+	display: flex;
+	gap: 10px;
+	margin-bottom: 10px;
+}
+
+/* Стилі для кнопки додавання посилання */
+.add-link-btn {
+	background-color: transparent;
+	border: none;
+	color: var(--text-color);
+	cursor: pointer;
+	font-size: 20px;
+	position: relative;
+	padding-left: 30px;
+	transition: color 0.3s ease;
+}
+
+.add-link-btn:hover {
+	color: #838383;
+}
+
+.add-link-btn::before {
+	content: "🔗";
+	/* Іконка посилання */
+	size: 50px;
+	;
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+/* Поле для введення посилання */
+.link-input {
+	display: none;
+	/* Спочатку приховане */
+	background-color: #1f1f1f9f;
+	color: var(--text-color);
+	border: 1px solid #3B82F6;
+	border-radius: 5px;
+	padding: 8px;
+	width: 100%;
+	margin-top: 10px;
+}
+
+body:not(.dark-mode) .link-input {
+	background-color: #ffffff76;
+	/* Темніший текст у світлій темі */
+}
+
+.link-input.active {
+
+	display: block;
+	/* Показуємо, коли активне */
+}
+
+/* Кастомізація кнопки вибору файлу */
+.custom-file-upload {
+	background-color: transparent;
+	border: none;
+	color: var(--text-color);
+	cursor: pointer;
+	font-size: 20px;
+	position: relative;
+	padding-left: 30px;
+	transition: color 0.3s ease;
+}
+
+.custom-file-upload:hover {
+	color: #838383;
+}
+
+.custom-file-upload::before {
+	content: "📎";
+	/* Іконка скріпки */
+	size: 50px;
+	;
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+/* Приховуємо стандартний input */
+.custom-file-upload input[type="file"] {
+	display: none;
+}
+
+/* Повідомлення */
+.alert-success {
+	background-color: #D1FAE5;
+	border-color: #A7F3D0;
+	color: #065F46;
+	border-radius: 5px;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+	.navbar {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.navbar .d-flex {
+		width: 100%;
+		margin-top: 10px;
+	}
+
+	.sidebar {
+		color: var(--text-color);
+		position: relative;
+		top: 0;
+		height: auto;
+		border-right: none;
+		border-bottom: 1px solid #3B82F6;
+		width: 100%;
+		/* На малих екранах займає всю ширину */
+		border-radius: 0;
+		/* Прибираємо заокруглення на малих екранах */
+	}
+
+	.main-content {
+		padding: 10px;
+	}
+
+	.material-card {
+		margin-bottom: 15px;
+	}
+
+	.form-label,
+	.form-control,
+	.form-select {
+		font-size: 20px;
+	}
+}
+
+p.text-muted {
+	font: 20px;
+	color: white !important;
+}
+
+/* Стилізація іконки перемикача теми */
+.theme-toggle {
+	position: fixed;
+	top: 12px;
+	right: 16px;
+	font-size: 24px;
+	background: none;
+	border: none;
+	color: var(--text-color);
+	z-index: 9999;
+	cursor: pointer;
+	transition: color 0.3s ease;
+}
+
+.theme-toggle:focus {
+	outline: none;
+}
+
+body:not(.dark-mode) .form-control::placeholder {
+	color: #555 !important;
+	/* Темніший сірий для кращої видимості */
+}
+
+body:not(.dark-mode) .card-text {
+	color: #00183e !important;
+	/* Темніший текст у світлій темі */
+}
+
+body:not(.dark-mode) .text-muted {
+	color: #428aff !important;
+	/* Темніший текст у світлій темі */
+}
+
+
+.btn-custom,
+.btn,
+.btn-success {
+	transition: all 0.3s ease, transform 0.2s ease;
+}
+
+.btn-custom:hover,
+.btn:hover,
+.btn-success:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn-custom:active,
+.btn:active,
+.btn-success:active {
+	transform: scale(0.96);
+	box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+body:not(.dark-mode) .form-label {
+	margin-bottom: 1rem;
+	color: #000000;
+}

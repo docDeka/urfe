@@ -14,7 +14,7 @@ urlpatterns = [
     path('toggle-favorite/<int:material_id>/', views.toggle_favorite, name='toggle_favorite'),
     path('profile/', views.profile, name='profile'),
     path('edit_profile/', views.edit_profile, name='edit_profile'),
-    path('create-material/', views.create_material, name='create_material'),  # Додано
-    path('edit-material/<int:material_id>/', views.edit_material, name='edit_material'),  # Додано
-    path('delete-material/<int:material_id>/', views.delete_material, name='delete_material'),  # Додано
+    path('create-material/', views.create_material, name='create_material'),
+    path('edit-material/<int:material_id>/', views.edit_material, name='edit_material'),
+    path('delete-material/<int:material_id>/', views.delete_material, name='delete_material'),
 ]
