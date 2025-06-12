@@ -1,0 +1,293 @@
+{% extends 'urfe/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+#file-success-alert {
+	display: none;
+	position: fixed;
+	top: 30px;
+	left: 50%;
+	transform: translate(-50%, -30px);
+	min-width: 250px;
+	background: #27ae60;
+	color: #fff;
+	border-radius: 8px;
+	padding: 16px 32px;
+	box-shadow: 0 8px 32px rgba(44,62,80,0.2);
+	font-size: 1.1rem;
+	z-index: 2000;
+	opacity: 0;
+	transition: opacity 0.5s, transform 0.5s;
+}
+#file-success-alert.show {
+	display: block;
+	opacity: 1;
+	transform: translate(-50%, 0);
+}
+#selected-file-name {
+	margin-left: 10px;
+	color: #b2ffb2;
+	font-weight: 500;
+	font-size: 1rem;
+	transition: color 0.3s;
+}
+.container.mt-5 {
+	margin-top: 100px !important;
+}
+.material-upload-options {
+	display: flex;
+	gap: 15px;
+	align-items: center;
+	margin-bottom: 10px;
+}
+.add-link-btn, .custom-file-upload {
+	background: #32406b;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	padding: 8px 18px;
+	cursor: pointer;
+	font-size: 1rem;
+	display: inline-flex;
+	align-items: center;
+	transition: background 0.2s;
+}
+.add-link-btn:hover, .custom-file-upload:hover {
+	background: #3d4e7a;
+}
+.custom-file-upload input[type="file"] {
+	display: none;
+}
+.btn-custom {
+	background: #27ae60;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	padding: 10px 28px;
+	font-size: 1.1rem;
+	margin-top: 10px;
+	transition: background 0.2s;
+}
+.btn-custom:hover {
+	background: #219150;
+}
+.btn-cancel {
+	background: #fff;
+	color: #32406b;
+	border: 1px solid #32406b;
+	border-radius: 6px;
+	padding: 10px 28px;
+	font-size: 1.1rem;
+	margin-top: 10px;
+	transition: background 0.2s, color 0.2s;
+	text-decoration: none;
+}
+.btn-cancel:hover {
+	background: #32406b;
+	color: #fff;
+}
+/* --- Material Current Block --- */
+.material-current {
+	background: #2a2a2a8a;
+	border-radius: 6px;
+	padding: 12px 18px;
+	margin-bottom: 18px;
+	color: #fff;
+	font-size: 1rem;
+}
+.material-current .material-label {
+	font-weight: 600;
+	margin-right: 10px;
+}
+.material-current .material-link,
+.material-current .material-file {
+	color: #b2ffb2;
+	word-break: break-all;
+}
+.material-current .material-link a,
+.material-current .material-file a {
+	color: #b2ffb2;
+	text-decoration: underline;
+}
+.material-current .material-link a:visited,
+.material-current .material-file a:visited {
+	color: #b2ffb2;
+}
+.material-current .material-link a:focus,
+.material-current .material-file a:focus,
+.material-current .material-link a:hover,
+.material-current .material-file a:hover {
+	color: #7ed957;
+}
+
+/* --- Light Theme Fixes --- */
+body.light-theme .material-current {
+	background: #f5f7fa;
+	color: #22305a;
+}
+body.light-theme .material-current .material-label {
+	color: #22305a;
+}
+body.light-theme .material-current .material-link,
+body.light-theme .material-current .material-file {
+	color: #22305a;
+}
+body.light-theme .material-current .material-link a,
+body.light-theme .material-current .material-file a {
+	color: #22305a;
+	text-decoration: underline;
+}
+body.light-theme .material-current .material-link a:visited,
+body.light-theme .material-current .material-file a:visited {
+	color: #22305a;
+}
+body.light-theme .material-current .material-link a:focus,
+body.light-theme .material-current .material-file a:focus,
+body.light-theme .material-current .material-link a:hover,
+body.light-theme .material-current .material-file a:hover {
+	color: #27ae60;
+}
+body.light-theme .material-current span[style*="color:#ffb2b2;"] {
+	color: #e74c3c !important;
+}
+body:not(.dark-mode) .material-current{
+	background-color: #ffffff83 !important;
+	color: #000000 !important;
+	/* Темніший сірий для кращої видимості */
+}
+
+body.light-theme #file-success-alert {
+	background: #eafaf1 !important;
+	color: #22305a !important;
+	border: 1px solid #27ae60;
+}
+</style>
+<div class="container mt-5">
+	<h2 class="text-center mb-4">Редагувати матеріал</h2>
+	{% if messages %}
+		{% for message in messages %}
+			<div class="alert alert-success alert-dismissible fade show" role="alert">
+				{{ message }}
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="this.parentElement.style.display='none';"></button>
+			</div>
+		{% endfor %}
+	{% endif %}
+
+	{# Відображення поточного файлу або посилання #}
+	<div class="material-current">
+		<span class="material-label">Доданий матеріал:</span>
+		{% if material.file and material.file.name %}
+			<span class="material-file">
+				<i class="bi bi-paperclip"></i>
+				<a href="{{ material.file.url }}" target="_blank" style="color:#b2ffb2;">{{ material.file.name|cut:"materials/" }}</a>
+			</span>
+		{% elif material.link %}
+			<span class="material-link">
+				<i class="bi bi-link-45deg"></i>
+				<a href="{{ material.link }}" target="_blank" style="color:#b2ffb2;">{{ material.link }}</a>
+			</span>
+		{% else %}
+			<span style="color:#ffb2b2;">Файл або посилання не додано</span>
+		{% endif %}
+	</div>
+
+	<div class="card p-4 shadow-sm" style="background-color: #2e3a5e; color: #ffffff;">
+		<form method="post" enctype="multipart/form-data">
+			{% csrf_token %}
+			<div class="mb-3">
+				<label for="id_title" class="form-label">Назва</label>
+				{{ form.title }}
+				{% if form.title.errors %}
+					<small class="text-danger">{{ form.title.errors }}</small>
+				{% endif %}
+			</div>
+			<div class="mb-3">
+				<label for="id_description" class="form-label">Опис</label>
+				{{ form.description }}
+				{% if form.description.errors %}
+					<small class="text-danger">{{ form.description.errors }}</small>
+				{% endif %}
+			</div>
+			<div class="mb-3">
+				<label for="id_category" class="form-label">Категорія</label>
+				{{ form.category }}
+				{% if form.category.errors %}
+					<small class="text-danger">{{ form.category.errors }}</small>
+				{% endif %}
+			</div>
+			<div class="mb-3">
+				<label class="form-label">Матеріал (опціонально)</label>
+				<div class="material-upload-options">
+					<button type="button" class="add-link-btn" onclick="toggleLinkInput()">
+						<span class="me-1" style='padding-right: 20px;'><i class="bi bi-link-45deg"></i></span> Додати посилання
+					</button>
+					<label class="custom-file-upload">
+						<span class="me-1" style='padding-right: 20px;'><i class="bi bi-paperclip"></i></span> Прикріпити файл
+						{{ form.file }}
+					</label>
+					<span id="selected-file-name"></span>
+					<span id="fileNameSpan" style='color: #219150;'>
+    {% if form.file.value %}
+        {{ form.file.value|cut:'materials/' }}
+    {% elif material.file and material.file.name %}
+        {{ material.file.name|cut:'materials/' }}
+    {% elif form.link.value or material.link %}
+        Посилання додано
+    {% else %}
+        Файл або посилання не додано
+    {% endif %}
+</span>
+
+				</div>
+				<input type="text" class="form-control link-input" id="linkInput" placeholder="Вставте посилання на матеріал..." name="link" style="display:none;" value="{{ form.link.value|default_if_none:material.link|default_if_none:'' }}">
+				{% if form.file.errors or form.link.errors %}
+					<small class="text-danger">
+						{% for error in form.file.errors %}{{ error }}<br>{% endfor %}
+						{% for error in form.link.errors %}{{ error }}<br>{% endfor %}
+					</small>
+				{% endif %}
+			</div>
+
+			<div class="d-flex justify-content-between mt-4">
+				<button type="submit" class="btn btn-custom">Зберегти зміни</button>
+				<a href="{% url 'home' %}" class="btn btn-cancel">Скасувати</a>
+			</div>
+		</form>
+	</div>
+</div>
+
+<div id="file-success-alert">Файл успішно доданий!</div>
+<script>
+function toggleLinkInput() {
+	const linkInput = document.getElementById('linkInput');
+	if (linkInput.style.display === 'none' || linkInput.style.display === '') {
+		linkInput.style.display = 'block';
+	} else {
+		linkInput.style.display = 'none';
+	}
+}
+
+// Показ імені вибраного файлу та анімоване повідомлення
+document.addEventListener('DOMContentLoaded', function() {
+	const fileInput = document.querySelector('input[type="file"][name="{{ form.file.name }}"]') || document.querySelector('input[type="file"]');
+	const fileNameSpan = document.getElementById('selected-file-name');
+	const alertBox = document.getElementById('file-success-alert');
+
+
+	if (fileInput) {
+		fileInput.addEventListener('change', function() {
+			if (fileInput.files.length > 0) {
+				fileNameSpan.textContent = fileInput.files[0].name;
+				alertBox.classList.add('show');
+				setTimeout(() => {
+					alertBox.classList.remove('show');
+				}, 2500);
+			} else {
+				fileNameSpan.textContent = '';
+			}
+		});
+	}
+});
+</script>
+{% endblock %}

@@ -10,7 +10,7 @@
             {% for message in messages %}
                 {{ message }}
             {% endfor %}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="this.parentElement.style.display='none';"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     {% endif %}
     <!-- Кнопка додавання матеріалу -->
@@ -21,31 +21,47 @@
             </a>
         </div>
     {% endif %}
-    <!-- Фільтри -->
-    <div class="filters mb-4">
-        <form method="get" class="row g-3">
-            <div class="col-md-6">
-                <label for="category" class="form-label">Категорія:</label>
-                <select name="category" id="category" class="form-select">
-                    <option value="">Усі категорії</option>
-                    {% for category in categories %}
-                        <option value="{{ category }}" {% if request.GET.category == category %}selected{% endif %}>{{ category }}</option>
-                    {% endfor %}
-                </select>
+    <!-- Кнопка відкриття фільтрів -->
+    <div class="mb-4 text-end">
+        <button class="btn btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#filtersModal">
+            <i class="fas fa-filter"></i> Фільтри
+        </button>
+    </div>
+    <!-- Фільтри (Bootstrap Modal) -->
+    <div class="modal fade" id="filtersModal" tabindex="-1" aria-labelledby="filtersModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content filter-modal-content">
+                <div class="modal-header filter-modal-header">
+                    <h5 class="modal-title fw-bold" id="filtersModalLabel" style="letter-spacing: 0.5px;">Фільтри</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
+                </div>
+                <div class="modal-body" style="background: transparent;"></div>
+                    <form method="get" class="row g-4">
+                        <div class="col-12">
+                            <label for="category" class="form-label fw-semibold" style="color: #adb5bd;">Категорія</label>
+                            <select name="category" id="category" class="form-select" style="min-height: 44px;">
+                                <option value="">Усі категорії</option>
+                                {% for category in categories %}
+                                    <option value="{{ category }}" {% if request.GET.category == category %}selected{% endif %}>{{ category }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="author" class="form-label fw-semibold" style="color: #adb5bd;">Автор</label>
+                            <select name="author" id="author" class="form-select" style="min-height: 44px;">
+                                <option value="">Усі автори</option>
+                                {% for author in authors %}
+                                    <option value="{{ author.id }}" {% if request.GET.author == author.id|stringformat:'s' %}selected{% endif %}>{{ author.username }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12 text-center mt-3">
+                            <button type="submit" class="btn btn-custom px-4 py-2" style="font-weight: 500; letter-spacing: 0.5px;">Фільтрувати</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="col-md-6">
-                <label for="author" class="form-label">Автор:</label>
-                <select name="author" id="author" class="form-select">
-                    <option value="">Усі автори</option>
-                    {% for author in authors %}
-                        <option value="{{ author.id }}" {% if request.GET.author == author.id|stringformat:'s' %}selected{% endif %}>{{ author.username }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-12 text-center">
-                <button type="submit" class="btn btn-custom">Фільтрувати</button>
-            </div>
-        </form>
+        </div>
     </div>
     <!-- Список матеріалів -->
     <div class="materials-list">
@@ -85,38 +101,35 @@
                     </div>
                 {% endfor %}
             </div>
-            
             <!-- Пагінація -->
             <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-center">
                     {% if page_obj.has_previous %}
                         <li class="page-item">
                             <a class="page-link" href="?page=1{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.author %}&author={{ request.GET.author }}{% endif %}" aria-label="First">
-                                <span aria-hidden="true">&laquo;&laquo;</span>
+                                <i class="fas fa-angle-double-left"></i>
                             </a>
                         </li>
                         <li class="page-item">
                             <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.author %}&author={{ request.GET.author }}{% endif %}" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
+                                <i class="fas fa-angle-left"></i>
                             </a>
                         </li>
                     {% endif %}
-                    
-                    <li class="page-item disabled">
-                        <span class="page-link">
+                    <li class="page-item disabled" style="pointer-events: none;">
+                        <span class="page-link" style="min-width: 200px; text-align: center; font-weight: bold; font-size: 1.25rem; color: rgba(180,190,200,0.75); background: transparent; border: none; opacity: 0.75;">
                             Сторінка {{ page_obj.number }} з {{ page_obj.paginator.num_pages }}
                         </span>
                     </li>
-                    
                     {% if page_obj.has_next %}
                         <li class="page-item">
                             <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.author %}&author={{ request.GET.author }}{% endif %}" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
+                                <i class="fas fa-angle-right" style="color: rgba(180,190,200,0.75);"></i>
                             </a>
                         </li>
                         <li class="page-item">
                             <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.author %}&author={{ request.GET.author }}{% endif %}" aria-label="Last">
-                                <span aria-hidden="true">&raquo;&raquo;</span>
+                                <i class="fas fa-angle-double-right" style="color: rgba(180,190,200,0.75);"></i>
                             </a>
                         </li>
                     {% endif %}
@@ -127,4 +140,107 @@
         {% endif %}
     </div>
 </div>
+<!-- Додаткові стилі для модального вікна фільтрів (темна тема + прозорість) -->
+<style>
+    @media (prefers-color-scheme: dark) {
+        #filtersModal .modal-content {
+            background: rgba(30, 34, 40, 0.92) !important;
+            color: #e9ecef;
+            box-shadow: 0 8px 32px rgba(20, 20, 40, 0.25);
+            border-radius: 1rem;
+            border: none;
+            backdrop-filter: blur(6px);
+        }
+        #filtersModal .modal-header {
+            border-bottom: 1px solid #23272b;
+            background: rgba(40, 44, 52, 0.85);
+        }
+        #filtersModal .modal-title {
+            font-weight: 600;
+            color: #f8fafc;
+        }
+        #filtersModal .modal-body {
+            background: transparent;
+        }
+        #filtersModal .form-label {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+            color: #adb5bd;
+        }
+        #filtersModal .form-select {
+            min-height: 44px;
+            font-size: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #343a40;
+            background: rgba(44, 50, 60, 0.85);
+            color: #e9ecef;
+            transition: border-color 0.2s;
+        }
+        #filtersModal .form-select:focus {
+            border-color: #6ea8fe;
+            box-shadow: 0 0 0 0.2rem rgba(13,110,253,.10);
+        }
+        #filtersModal .btn-custom {
+            background: #23272b;
+            color: #fff;
+            border-radius: 0.5rem;
+            border: none;
+            transition: background 0.2s;
+        }
+        #filtersModal .btn-custom:hover {
+            background: #111317;
+            color: #fff;
+        }
+        #filtersModal .btn-close {
+            filter: invert(1);
+        }
+    }
+    /* Світла тема (залишаємо як було) */
+    #filtersModal .modal-content {
+        box-shadow: 0 8px 32px rgba(60, 80, 120, 0.15);
+        border-radius: 1rem;
+        border: none;
+        background: rgba(255,255,255,0.97);
+        backdrop-filter: blur(4px);
+    }
+    #filtersModal .modal-header {
+        border-bottom: 1px solid #e9ecef;
+        background: #f8f9fa;
+    }
+    #filtersModal .modal-title {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    #filtersModal .modal-body {
+        background: #fafdff;
+    }
+    #filtersModal .form-label {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+        color: #495057;
+    }
+    #filtersModal .form-select {
+        min-height: 44px;
+        font-size: 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid #ced4da;
+        background: #fff;
+        transition: border-color 0.2s;
+    }
+    #filtersModal .form-select:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.2rem rgba(13,110,253,.15);
+    }
+    #filtersModal .btn-custom {
+        background: #2c3e50;
+        color: #fff;
+        border-radius: 0.5rem;
+        border: none;
+        transition: background 0.2s;
+    }
+    #filtersModal .btn-custom:hover {
+        background: #1a2533;
+        color: #fff;
+    }
+</style>
 {% endblock %}

@@ -26,15 +26,9 @@ class Material(models.Model):
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
-    bio = models.TextField(
-        max_length=100,
-        validators=[MaxLengthValidator(100, message="Опис не може перевищувати 20 слів (100 символів).")],
-        blank=True,
-        help_text="Напишіть кілька слів про себе (до 20 слів)."
-    )
     ROLE_CHOICES = (
-        ('user', 'Користувач'),
-        ('moderator', 'Модератор'),
+        ('user', 'Студент'),
+        ('teacher', 'Викладач'),
         ('admin', 'Адміністратор'),
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='user')

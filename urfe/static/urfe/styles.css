@@ -75,12 +75,98 @@ body:not(.dark-mode) .text-center mt-3 {
 	position: fixed;
 }
 
+/* Мінімалістична, сучасна та естетична пагінація */
+.pagination {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	margin: 32px 0;
+}
+
+.page-item {
+	list-style: none;
+}
+
+.page-link {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	font-size: 18px;
+	font-weight: 500;
+	color: var(--text-color);
+	background: rgba(120, 144, 156, 0.10);
+	border: none;
+	transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+	text-decoration: none;
+	box-shadow: 0 1px 4px rgba(30, 41, 59, 0.04);
+	cursor: pointer;
+	user-select: none;
+}
+
+.page-link:hover:not(.disabled):not(.active) {
+	background: rgba(59, 130, 246, 0.13);
+	color: #2563EB;
+}
+
+.page-item.active .page-link {
+	background: #3B82F6;
+	color: #fff;
+	box-shadow: 0 2px 8px rgba(59, 130, 246, 0.10);
+	cursor: default;
+}
+
+.page-link.disabled,
+.page-item.disabled .page-link {
+	opacity: 0.45;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+/* Стрілки */
+.page-link.arrow {
+	font-size: 20px;
+	background: rgba(120, 144, 156, 0.07);
+	padding: 0;
+}
+
+.page-link.arrow.prev::before {
+	content: '←';
+}
+
+.page-link.arrow.next::before {
+	content: '→';
+}
+
+/* Темна тема */
+body.dark-mode .page-link {
+	background: rgba(30, 41, 59, 0.18);
+	color: #f1f1f1;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10);
+}
+
+body.dark-mode .page-link:hover:not(.disabled):not(.active) {
+	background: rgba(245, 158, 11, 0.18);
+	color: #F59E0B;
+}
+
+body.dark-mode .page-item.active .page-link {
+	background: #F59E0B;
+	color: #1E293B;
+	box-shadow: 0 2px 8px rgba(245, 158, 11, 0.10);
+}
+
+
 .navbar .dropdown-toggle span {
 	color: var(--text-color) !important;
 }
 
 :root {
-	--text-color: #212529;
+	--text-color: #212529 !important;
+	--bg-color: #f8f9fa86 !important;
 }
 
 body.dark-mode {
@@ -132,6 +218,16 @@ body.dark-mode {
 .tab-content .list-group-item {
 	background-color: #1E293B;
 	color: #FFFFFF;
+	/* Білий текст для списків */
+	border: none;
+	margin-bottom: 5px;
+	border-radius: 5px;
+}
+
+body:not(.dark-mode) .tab-content .list-group-item {
+	background-color: var(--bg-color);
+	/* Світлий фон для списків у світлій темі */
+	color: var(--text-color);
 	/* Білий текст для списків */
 	border: none;
 	margin-bottom: 5px;
@@ -534,20 +630,22 @@ p.text-muted {
 
 /* Стилізація іконки перемикача теми */
 .theme-toggle {
-	position: fixed;
-	top: 12px;
-	right: 16px;
-	font-size: 24px;
-	background: none;
-	border: none;
-	color: var(--text-color);
-	z-index: 9999;
-	cursor: pointer;
-	transition: color 0.3s ease;
+	margin-top: 16px !important;
+	margin-right: 20px !important;
+	position: fixed !important;
+	top: 12px !important;
+	right: 16px !important;
+	font-size: 24px !important;
+	background: none !important;
+	border: none !important;
+	color: var(--text-color) !important;
+	z-index: 9999 !important;
+	cursor: pointer !important;
+	transition: color 0.3s ease !important;
 }
 
 .theme-toggle:focus {
-	outline: none;
+	outline: none !important;
 }
 
 body:not(.dark-mode) .form-control::placeholder {

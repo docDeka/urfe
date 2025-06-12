@@ -38,20 +38,67 @@
     --link-color: #ffffff;
   }
 .theme-toggle {
-  position: fixed;
-  top: 12px;
-  right: 16px;
-  font-size: 22px;
-  background: none;
-  border: none;
-  color: var(--text-color);
-  z-index: 999;
-  cursor: pointer;
+  background-color: transparent !important;
+  position: absolute !important;
+  top: 8px !important;
+  right: 12px !important;
+  font-size: 22px !important;
+  background: none !important;
+  border: none !important;
+  color: var(--text-color) !important;
+  z-index: 3001 !important;
+  cursor: pointer !important;
+  width: 64px !important;
+  height: 64px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 12px !important;
+  border-radius: 50% !important;
+  transition: background 0.2s;
+  box-sizing: border-box !important;
 }
-.theme-toggle:focus {
-  outline: none;
+.theme-toggle:focus-visible {
+  outline: 2px solid #0d6efd !important;
+  outline-offset: 2px !important;
 }
+.theme-toggle:hover, .theme-toggle:focus {
+  background: rgba(0,0,0,0.07) !important;
+}
+.theme-toggle i {
+  font-size: 28px !important;
+  pointer-events: none;
+}
+/* Зміщуємо спадне меню в навбарі вліво */
+@media (min-width: 768px) {
+  .navbar .dropdown-menu {
+    right: 140px !important;
+    left: auto !important;
+  }
+}
+.spin-grow {
+        animation: spin-grow 1s ease-in-out forwards;
+    }
 
+    .moon-swing {
+        animation: moon-swing-hinge 1.2s ease-in-out forwards;
+        transform-origin: top center;
+    }
+
+    @keyframes spin-grow {
+        0% { transform: scale(1) rotate(0deg); }
+        50% { transform: scale(1.5) rotate(360deg); }
+        100% { transform: scale(1) rotate(360deg); }
+    }
+
+    @keyframes moon-swing-hinge {
+        0%   { transform: rotate(0deg); opacity: 1; }
+        20%  { transform: rotate(30deg); }
+        40%  { transform: rotate(-20deg); }
+        60%  { transform: rotate(15deg); }
+        80%  { transform: rotate(-10deg); }
+        100% { transform: rotate(0deg); }
+    }
 
 .card, .form-control, .form-select, .btn, .sidebar {
   background-color: var(--card-bg) !important;
@@ -148,7 +195,7 @@ body.dark-mode .form-control::placeholder {
 }
 
 /* From Uiverse.io by JkHuger */ 
-@keyframes snow {
+@keyframes snow  {
   0% {
     opacity: 0;
     transform: translateY(0px);
@@ -553,21 +600,21 @@ body.dark-mode .form-control::placeholder {
   </div></div>
 </div>
 
-    <!-- Верхнє меню -->
-    <nav class="navbar navbar-expand-lg" style="background-color: var(--card-bg); color: var(--text-color); position: relative; z-index: 2000;">
-        <div class="container-fluid" style="position: relative; z-index: 2000;">
-          <button class="theme-toggle" onclick="toggleTheme()">
-  <i id="theme-icon" class="fas fa-sun"></i>
-</button>
-            <a href="{% url 'home' %}">
-                <img src="{% static 'urfe/logo.png' %}?v={% now 'U' %}" alt="URFE Logo" style="width: 110px; ">
-            </a>
-            <form class="d-flex ms-auto" method="get" action="{% url 'home' %}">
-                <input class="form-control me-2" type="search" name="search" placeholder="Пошук..." aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Знайти</button>
-            </form>
+  <!-- Верхнє меню -->
+  <nav class="navbar navbar-expand-lg" style="background-color: var(--card-bg); color: var(--text-color); position: relative; z-index: 2000;">
+    <div class="container-fluid" style="position: relative; z-index: 2000;">
+      <a href="{% url 'home' %}"></a>
+        <img src="{% static 'urfe/logo.png' %}?v={% now 'U' %}" alt="URFE Logo" style="width: 110px; ">
+      </a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Перемкнути тему">
+        <i id="theme-icon" class="fas fa-sun"></i>
+      </button>
+      <div class="d-flex align-items-center ms-auto"></div>
+    <input class="form-control me-2" type="search" placeholder="Пошук" aria-label="Пошук" name="q" style="max-width: 200px; width: 100%;">
+    <button class="btn btn-outline-success" type="submit">Знайти</button>
+</form>
             {% if user.is_authenticated %}
-                <div class="dropdown ms-3" style="position: relative; z-index: 2100;">
+                <div class="dropdown ms-3" style="position: relative; z-index: 2100; margin-right: 60px;">
                     <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="position: relative; z-index: 2101;">
                         {% if user.userprofile.avatar %}
                             <img src="{{ user.userprofile.avatar.url }}" alt="Аватар" class="user-avatar-nav" style="width: 40px; height: 40px; border-radius: 50%;">
@@ -692,28 +739,38 @@ body.dark-mode .form-control::placeholder {
       console.warn('localStorage недоступний');
     }
 
-    // застосовуємо тему
-    if (theme === 'dark') {
-      body.classList.add('dark-mode');
-      if (icon) icon.className = 'fas fa-moon';
-    } else {
-      if (icon) icon.className = 'fas fa-sun';
+    // Перевірка теми
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.body.classList.add('dark-mode');
+        if (icon) icon.className = 'fas fa-moon';
     }
 
-    // функція перемикання теми
-    window.toggleTheme = function () {
-      const isDark = body.classList.toggle('dark-mode');
-      const newTheme = isDark ? 'dark' : 'light';
-
-      try {
+    // Функція перемикання теми
+    window.toggleTheme = function() {
+        const isDark = document.body.classList.toggle('dark-mode');
+        const newTheme = isDark ? 'dark' : 'light';
         localStorage.setItem('theme', newTheme);
-      } catch (e) {
-        console.warn('Не вдалося зберегти тему');
-      }
 
-      if (icon) icon.className = isDark ? 'fas fa-moon' : 'fas fa-sun';
+        if (icon) {
+            if (newTheme === 'dark') {
+                icon.className = 'fas fa-moon';
+                icon.classList.remove('spin-grow');
+                icon.classList.add('moon-swing');
+            } else {
+                icon.className = 'fas fa-sun';
+                icon.classList.remove('moon-swing');
+                icon.classList.add('spin-grow');
+            }
+
+            setTimeout(() => {
+                icon.classList.remove('spin-grow');
+                icon.classList.remove('moon-swing');
+            }, 1300);
+        }
     };
-  });
+});
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>

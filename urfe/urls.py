@@ -13,6 +13,7 @@ urlpatterns = [
     path('material/<int:material_id>/', views.material_detail, name='material_detail'),
     path('toggle-favorite/<int:material_id>/', views.toggle_favorite, name='toggle_favorite'),
     path('profile/', views.profile, name='profile'),
+    path('profile/<int:user_id>/', views.user_profile, name='user_profile'),
     path('edit_profile/', views.edit_profile, name='edit_profile'),
     path('create-material/', views.create_material, name='create_material'),
     path('edit-material/<int:material_id>/', views.edit_material, name='edit_material'),

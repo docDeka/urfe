@@ -1,48 +1,259 @@
-<!-- templates/urfe/profile.html -->
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URFE — Профіль</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'urfe/styles.css' %}">
-</head>
-<body>
-    <div class="overlay"></div>
-    <div class="container-fluid">
-        <div class="main-content">
-            <h2 class="text-center mb-5">Профіль користувача</h2>
-            <div class="row">
-                <div class="col-md-4 text-center">
-                    {% if user_profile.avatar %}
-                        <img src="{{ user_profile.avatar.url }}" alt="Аватар" class="user-avatar">
-                    {% else %}
-                        <img src="/media/urfe/basic_avatar.png" alt="Аватар" class="user-avatar">
-                    {% endif %}
-                    <h4 class="mt-2">{{ user.username }}</h4>
-                    <a href="{% url 'edit_profile' %}" class="btn btn-custom mt-2">
-                        <i class="fas fa-edit"></i> Редагувати профіль
-                    </a>
-                    <a href="{% url 'home' %}" class="btn btn-custom mt-2">Назад</a>
-                </div>
-                <div class="col-md-8">
-                    <h5>Ваші матеріали</h5>
-                    {% if user_materials.exists %}
-                        <ul class="list-group">
-                            {% for material in user_materials %}
-                                <li class="list-group-item">{{ material.title }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p class="text-muted">Ви ще не опублікували жодного матеріалу.</p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
+{% extends 'urfe/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+:root {
+    --profile-bg: #f8f9fae6;
+    --profile-text: #232946;
+    --profile-accent: #eebbc3;
+    --profile-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+}
+body {
+    background-image: url("{% static 'urfe/bg-light.jpg' %}");
+    color: var(--profile-text);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+body.dark-mode {
+    background-image: url("{% static 'urfe/bg-dark.jpg' %}");
+    --profile-bg: #232946e6;
+    --profile-text: #f1f1f1;
+    --profile-accent: #eebbc3;
+}
+body:not(.dark-mode) {
+    background-image: url("{% static 'urfe/bg-light.jpg' %}");
+    --profile-bg: #ffffff90;
+    --profile-text: #030303;
+    --profile-accent: #000000;
+}
+.profile-container {
+    max-width: 440px;
+    margin: 100px auto 0 auto;
+    background: var(--profile-bg);
+    border-radius: 22px;
+    box-shadow: var(--profile-shadow);
+    padding: 38px 34px 32px 34px;
+    color: var(--profile-text);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s, color 0.3s;
+}
+.profile-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+.profile-header h2 {
+    font-size: 2.1em;
+    font-weight: 700;
+    color: var(--profile-accent);
+    letter-spacing: 0.03em;
+    margin-bottom: 0;
+}
+.profile-avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 18px;
+}
+.profile-avatar img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid var(--profile-accent);
+    background: #fff;
+    box-shadow: 0 2px 16px #0001;
+    transition: border 0.2s;
+}
+.profile-info {
+    background: #fff;
+    color: #232946;
+    font-weight: 500;
+    padding: 18px 22px 14px 22px;
+    border-radius: 14px;
+    margin: 18px 0 22px 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    letter-spacing: 0.02em;
+    font-size: 1.13em;
+    box-shadow: 0 2px 12px #0001;
+    border: 1px solid #eebbc380;
+    line-height: 1.7;
+    transition: background 0.3s, color 0.3s;
+}
+body.dark-mode .profile-info {
+    color: #fff;
+    background: #232946;
+    border: 1px solid #eebbc355;
+}
+.profile-info p {
+    margin-bottom: 8px;
+}
+.profile-info strong {
+    color: var(--profile-accent);
+    font-weight: 600;
+}
+.section-title {
+    font-size: 1.18em;
+    color: var(--profile-accent);
+    font-weight: 600;
+    margin-bottom: 10px;
+    margin-top: 18px;
+    letter-spacing: 0.01em;
+}
+.materials-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 10px 0;
+}
+.materials-list li {
+    background: #f7e9ed;
+    color: #232946;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    padding: 8px 14px;
+    font-size: 1em;
+    box-shadow: 0 1px 6px #0001;
+    border-left: 4px solid var(--profile-accent);
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+body.dark-mode .materials-list li {
+    background: #232946;
+    color: #fff;
+    border-left: 4px solid #eebbc3;
+}
+.material-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+}
+.material-action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 4px;
+    display: flex;
+    align-items: center;
+    color: var(--profile-accent);
+    font-size: 1.1em;
+    transition: color 0.2s;
+}
+.material-action-btn:hover {
+    color: #d16b7a;
+}
+.text-muted {
+    color: #b0b0b0 !important;
+    font-size: 0.98em;
+    margin-bottom: 12px;
+}
+.profile-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 28px;
+}
+.btn-custom {
+    background: var(--profile-accent);
+    color: var(--profile-bg);
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 30px;
+    font-size: 1em;
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
+    box-shadow: 0 2px 8px #0001;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+}
+.btn-custom:hover {
+    background: #f6c7be;
+    color: var(--profile-bg);
+}
+@media (max-width: 600px) {
+    .profile-container {
+        margin-top: 100px;
+        padding: 18px 6vw 18px 6vw;
+        max-width: 98vw;
+    }
+    .profile-header h2 {
+        font-size: 1.3em;
+    }
+    .profile-avatar img {
+        width: 80px;
+        height: 80px;
+    }
+    .materials-list li {
+        font-size: 0.98em;
+        padding: 8px 8px;
+    }
+    .material-actions {
+        gap: 4px;
+    }
+}
+.material-action-icon {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+}
+</style>
+
+<div class="profile-container">
+    <div class="profile-header">
+        <h2>Профіль користувача</h2>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <div class="profile-avatar">
+        {% if user.userprofile.avatar %}
+            <img id="current-avatar-img" src="{{ user.userprofile.avatar.url }}" alt="Поточний аватар">
+        {% else %}
+            <img id="current-avatar-img" src="{% static 'urfe/basic_avatar.png' %}" alt="Поточний аватар">
+        {% endif %}
+    </div>
+    <div class="profile-info">
+        <p><strong>Ім'я користувача:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Дата реєстрації:</strong> {{ user.date_joined|date:"d.m.Y" }}</p>
+    </div>
+    <div>
+        <div class="section-title">Ваші матеріали</div>
+        {% if user_materials.exists %}
+            <ul class="materials-list">
+                {% for material in user_materials %}
+                    <li>{{ material.title }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="text-muted">Ви ще не опублікували жодного матеріалу.</div>
+        {% endif %}
+    </div>
+    <div class="profile-actions">
+        <a href="{% url 'edit_profile' %}" class="btn btn-custom">Редагувати профіль</a>
+        <a href="{% url 'home' %}" class="btn btn-custom">Назад</a>
+    </div>
+</div>
+
+<script>
+// Theme switcher
+function setTheme(theme) {
+    if (theme === 'dark') {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
+    }
+}
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        setTheme('dark');
+    } else {
+        setTheme('light');
+    }
+});
+</script>
+{% endblock %}

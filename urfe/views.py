@@ -143,13 +143,22 @@ def toggle_favorite(request, material_id):
 
 @login_required
 def profile(request):
-    user_profile = UserProfile.objects.select_related('user').get(user=request.user)
-    user_materials = Material.objects.filter(author=request.user).select_related('category')
+    return redirect('user_profile', user_id=request.user.id)
+
+@login_required
+def user_profile(request, user_id):
+    target_user = get_object_or_404(User, id=user_id)
+    user_profile = get_object_or_404(UserProfile, user=target_user)
+    user_materials = Material.objects.filter(author=target_user).select_related('category')
     
+    is_own_profile = (request.user.id == user_id)
+
     return render(request, 'urfe/profile.html', {
         'user_profile': user_profile,
         'user_materials': user_materials,
+        'is_own_profile': is_own_profile,
     })
+
 
 @login_required
 def edit_profile(request):
@@ -173,7 +182,11 @@ def edit_material(request, material_id):
             return redirect('home')
     else:
         form = MaterialForm(instance=material)
-    return render(request, 'urfe/edit_material.html', {'form': form, 'material': material})
+    return render(request, 'urfe/edit_material.html', {
+    'form': form,
+    'material': material,
+    'object': material  # щоб шаблон не зламався, якщо десь використовується object
+})
 
 @login_required
 def delete_material(request, material_id):
@@ -183,3 +196,14 @@ def delete_material(request, material_id):
         messages.success(request, 'Матеріал успішно видалено!')
         return redirect('home')
     return render(request, 'urfe/confirm_delete.html', {'material': material})
+
+@login_required
+def user_profile(request, user_id):
+    target_user = get_object_or_404(User, id=user_id)
+    user_profile = get_object_or_404(UserProfile, user=target_user)
+    user_materials = Material.objects.filter(author=target_user)
+
+    return render(request, 'urfe/profile.html', {
+        'user_profile': user_profile,
+        'user_materials': user_materials,
+    })

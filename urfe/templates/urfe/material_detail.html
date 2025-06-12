@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container" style="margin-top: 100px;"></div>
     <div class="card">
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
@@ -23,7 +23,7 @@
                 </div>
                 <div class="col-md-6">
                     <p class="card-text"><strong>Автор:</strong> 
-                        <a href="{% url 'profile' material.author.id %}">{{ material.author.username }}</a>
+                        {{ material.author.username }}
                     </p>
                 </div>
             </div>
@@ -36,17 +36,59 @@
                         <i class="fas fa-download"></i> Завантажити ({{ material.file.size|filesizeformat }})
                     </a>
                 </div>
-            {% endif %}
-            
-            {% if material.author == user %}
-                <div class="mt-4">
-                    <a href="{% url 'edit_material' material.id %}" class="btn btn-primary">
-                        <i class="fas fa-edit"></i> Редагувати
-                    </a>
-                    <a href="{% url 'delete_material' material.id %}" class="btn btn-danger ms-2">
-                        <i class="fas fa-trash"></i> Видалити
+                <div class="d-flex align-items-center bg-light rounded-3 shadow-sm p-4 file-panel" style="min-height: 110px; margin-top: 20px;">
+                    {% with file_url=material.file.url|lower %}
+                        {% if ".jpg" in file_url or ".jpeg" in file_url or ".png" in file_url or ".gif" in file_url %}
+                            <img src="{{ material.file.url }}" alt="Зображення" class="rounded-3 me-4 border" style="width: 140px; height: 90px; object-fit: cover;">
+                        {% elif ".mp4" in file_url or ".webm" in file_url or ".ogg" in file_url %}
+                            <video width="140" height="90" controls class="rounded-3 me-4 border" style="object-fit: cover;">
+                                <source src="{{ material.file.url }}">
+                                Ваш браузер не підтримує відео.
+                            </video>
+                        {% else %}
+                            <div class="me-4 d-flex align-items-center justify-content-center" style="width: 140px; height: 90px; background: #e9ecef; border-radius: 12px;">
+                                <i class="fas fa-file-alt fa-2x text-primary"></i>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    <div class="flex-grow-1">
+                        <div class="fw-bold mb-2" style="font-size: 1.1rem; color: #0d6efd;">Файл</div>
+                        <div class="text-dark small mb-2" style="word-break: break-all; font-size: 1rem;">{{ material.file.name|default:"Файл" }}</div>
+                    </div>
+                    <a href="{{ material.file.url }}" class="btn btn-primary ms-4 px-4 py-2" target="_blank" style="font-weight: 500;">
+                        <i class="fas fa-download me-1"></i> Завантажити
                     </a>
                 </div>
+            {% elif material.link %}
+                <div class="d-flex align-items-center bg-light rounded-3 shadow-sm p-4 file-panel" style="min-height: 110px;">
+                    {% with link_url=material.link|lower %}
+                        {% if ".jpg" in link_url or ".jpeg" in link_url or ".png" in link_url or ".gif" in link_url %}
+                            <img src="{{ material.link }}" alt="Зображення" class="rounded-3 me-4 border" style="width: 140px; height: 90px; object-fit: cover;">
+                        {% elif "youtube.com" in link_url or "youtu.be" in link_url %}
+                            <iframe width="140" height="90" src="https://www.youtube.com/embed/{{ material.link|cut:'https://youtu.be/'|cut:'https://www.youtube.com/watch?v=' }}" frameborder="0" allowfullscreen class="rounded-3 me-4 border"></iframe>
+                        {% else %}
+                            <div class="me-4 d-flex align-items-center justify-content-center" style="width: 140px; height: 90px; background: #e9ecef; border-radius: 12px;">
+                                <i class="fas fa-link fa-2x text-success"></i>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    <div class="flex-grow-1">
+                        <div class="fw-bold mb-2" style="font-size: 1.1rem; color: #198754;">Посилання</div>
+                        <div class="text-dark small mb-2" style="word-break: break-all; font-size: 1rem;">{{ material.link }}</div>
+                    </div>
+                    <a href="{{ material.link }}" class="btn btn-success ms-4 px-4 py-2" target="_blank" style="font-weight: 500;">
+                        <i class="fas fa-external-link-alt me-1"></i> Відкрити
+                    </a>
+                </div>
+            {% endif %}
+            
+            {% if is_own_material %}
+                <form action="{% url 'delete_material' material.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm mt-2" onclick="return confirm('Ви впевнені, що хочете видалити цей матеріал?');">
+                        <i class="fas fa-trash-alt"></i> Видалити матеріал
+                    </button>
+                </form>
             {% endif %}
         </div>
     </div>
