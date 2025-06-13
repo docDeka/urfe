@@ -603,7 +603,7 @@ body.dark-mode .form-control::placeholder {
   <!-- Верхнє меню -->
   <nav class="navbar navbar-expand-lg" style="background-color: var(--card-bg); color: var(--text-color); position: relative; z-index: 2000;">
     <div class="container-fluid" style="position: relative; z-index: 2000;">
-      <a href="{% url 'home' %}"></a>
+      <a href="{% url 'home' %}">
         <img src="{% static 'urfe/logo.png' %}?v={% now 'U' %}" alt="URFE Logo" style="width: 110px; ">
       </a>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Перемкнути тему">
